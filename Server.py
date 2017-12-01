@@ -14,11 +14,8 @@ def run():
 	#SETUP
 	serverSocket = socket(AF_INET,SOCK_STREAM)
 	serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-	#do i need to have threads here so the server is listening to every client node??
 	serverSocket.bind((gethostbyname(gethostname()), port))
-	#ip=(gethostbyname(gethostname()))
-	
-	
+
 	#WAIT FOR CONNECTION
 	print( 'The server is ready to listen \n')	  
 	serverSocket.listen(max_conn)
@@ -32,10 +29,10 @@ def run():
 			conn, addr = serverSocket.accept() #acept connection from browser
 			while True:	
 				data=conn.recv(BUFFER_SIZE).decode()
-				print(data)
-				if "FILE" in data:
-					print( 'Starting new file request thread \n')	
-					threading.Thread(target=fileRequest, args=(conn, data)).start()
+				print("RECIEVED: ",data)
+				#if "FILE" in data:
+				print( 'Server connection made \n')	
+				threading.Thread(target=fileRequest, args=(conn, data)).start()
 		
 		except Exception as e:
 			if serverSocket:
@@ -49,6 +46,11 @@ def run():
 def fileRequest(conn, msg):
 	splitMessage = msg.split('\n')
 	filename = splitMessage[0].split(':')[1].strip()
+	
+	
+	
+	
+	
 	filepath=find_file(filename)
 	print(" sending file path")
 	print(str(filepath))	

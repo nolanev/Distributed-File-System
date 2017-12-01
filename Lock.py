@@ -18,13 +18,12 @@ def run():
 	#SETUP
 	serverSocket = socket(AF_INET,SOCK_STREAM)
 	serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-	#do i need to have threads here so the server is listening to every client node??
 	serverSocket.bind((gethostbyname(gethostname()), port))
 	#ip=(gethostbyname(gethostname()))
 	
 	
 	#WAIT FOR CONNECTION
-	print( 'The server is ready to listen \n')	  
+	print( 'The lock server is ready to listen \n')	  
 	serverSocket.listen(max_conn)
 	
 	while True:	
@@ -34,7 +33,7 @@ def run():
 				  
 			#START THREAD FOR CONNECTION
 			conn, addr = serverSocket.accept() #acept connection from browser
-			print( 'Starting new thread \n')	
+			print( 'Lock server connection amde \n')	
 			threading.Thread(target=request, args=(conn, port)).start()
 		
 		except Exception as e:
