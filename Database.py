@@ -1,4 +1,5 @@
-
+import os
+import os.path
 
 def find_file(filename):
 	print("the file we are looking for is ", filename)

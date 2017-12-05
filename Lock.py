@@ -33,7 +33,6 @@ def run():
 				  
 			#START THREAD FOR CONNECTION
 			conn, addr = serverSocket.accept() #acept connection from browser
-			print( 'Lock server connection amde \n')	
 			threading.Thread(target=request, args=(conn, port)).start()
 		
 		except Exception as e:
@@ -60,8 +59,10 @@ def request(conn, port):
 			conn.send(reply.encode())
 			conn.close()
 	elif ("FINISHED" in msg):
-		finish_handler(filename, conn)
+		
+		finish_handler(filename)
 		conn.close()
+		
 	#except Exception as e:
 	#	print(e.with_traceback())
 		
@@ -86,7 +87,7 @@ def request_handler(filename, conn):
 	#if not put mutex and return true
 	
 def finish_handler(filename):
-	locked_files.delete(filename)
+	locked_files.remove(filename)
 	#when we change from polling pop next connection looking for file off the stack
 	
 	

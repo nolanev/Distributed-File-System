@@ -27,12 +27,12 @@ def run():
 				  
 			#START THREAD FOR CONNECTION
 			conn, addr = serverSocket.accept() #acept connection from browser
-			while True:	
-				data=conn.recv(BUFFER_SIZE).decode()
-				print("RECIEVED: ",data)
-				#if "FILE" in data:
-				print( 'Server connection made \n')	
-				threading.Thread(target=fileRequest, args=(conn, data)).start()
+			
+			data=conn.recv(BUFFER_SIZE).decode()
+			print("SERVER RECIEVED: ",data)
+			#if "FILE" in data:
+			print( 'Server connection made \n')	
+			threading.Thread(target=fileRequest, args=(conn, data)).start()
 		
 		except Exception as e:
 			if serverSocket:
@@ -46,13 +46,8 @@ def run():
 def fileRequest(conn, msg):
 	splitMessage = msg.split('\n')
 	filename = splitMessage[0].split(':')[1].strip()
-	
-	
-	
-	
-	
 	filepath=find_file(filename)
-	print(" sending file path")
+	print(" Server sending file path")
 	print(str(filepath))	
 	conn.send(filepath.encode())##cant send this for some reason
 	
