@@ -2,7 +2,6 @@ from socket import *
 import sys
 import os
 import os.path
-#import thread  
 import threading
 from threading import Thread
 import time
@@ -37,13 +36,11 @@ def run():
 				#print "Could not open socket:", message
 			sys.exit(1) 
 	
-	#CLOSE CONNECTION 
-	#serverSocket.listen(max_conn)
 	serverSocket.close()
 	
 def request(conn_to_client, port):
 	msg=conn_to_client.recv(1024).decode()
-	#conn_to_client.close()
+	
 	filename=parse(msg)
 	request_handler(filename, conn_to_client)
 
@@ -54,45 +51,38 @@ def parse(msg):
 	filename = splitMessage[0].split(':')[1].strip()
 	return filename
 
-#TODO parse to return file object
-	
 def request_handler(filename, conn_to_client):
 	if filename in  os.listdir("cached_files/"):
 		print("CHACHE HIT", filename)
-		#return file TODO
-		filename="cached_files/" +str(filename)
-		f = open(filename,'rb')
+		filpath="cached_files/" +str(filename)
+		f = open(filepath,'rb')
 		l = f.read(1024)
 		conn_to_client.send(l)
 		print('CACHE SENT ',repr(l))
 		f.close()
 	else:
-		print("CHACHE MISS", filename)
-		#NEW SOCKET#
+		print("CACHE MISS", filename)
 		time.sleep(3)
-		socketwserver=socket(AF_INET,SOCK_STREAM)
+		conn_to_directory=socket(AF_INET,SOCK_STREAM)
 	
-		socketwserver.connect((gethostbyname(gethostname()),8000))
+		conn_to_directory.connect((gethostbyname(gethostname()),8000)) #connect to directory and request the file to be cached and sent on to the client
 	
 		request= "CACHE REQUEST: " + str(filename)
-		socketwserver.send((request).encode())
-		responce=socketwserver.recv(1024).decode()
-		socketwserver.close()
+		conn_to_directory.send((request).encode())
+		responce=conn_to_directory.recv(1024).decode()
+		conn_to_directory.close()
 		#Get a responceof a file name and path
 		#f.open
 		f = open(responce,'rb')
 		l = f.read(1024)
 		conn_to_client.send(l)
 		print('CACHE SENT ',repr(l))
-		#TODO
-		#save the file into my database
+	
+		#save the file into my cache
 		filename="cached_files/" +str(filename)
 		f_new= open(filename,"w+")
 		f_new.write(repr(l))
 		f_new.close()
-		
-		#save to cachedfiles list
-		
 	
 if __name__ == "__main__":
 	run()
